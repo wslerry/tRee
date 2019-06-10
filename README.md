@@ -12,5 +12,6 @@ install.packages("devtools")
 if devtools already installed in R, continue to following:
 
 ```R
+library(devtools)
 install_github("wslerry/tRee")
 ```
