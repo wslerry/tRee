@@ -1,0 +1,25 @@
+Package: tRee
+Type: Package
+Title: Volume/Ha Prediction Model of Acacia Mg.
+Version: 0.1.0
+Author: Lerry William Seling
+Maintainer: The package maintainer <wslerry2@hotmail.com>
+Description: A collection of models developed based on allometric dataset of Acacia Mangium in LFP0043 (GPP Sdn Bhd).
+    This package required user to have a dataset such as 'DBH','H','BA' and 'VUB' where:
+    DBH = Diameter at breast height
+    H = Tree height
+    BA = Basal area
+    VUB = Tree volume
+    A prediction for volume/ha of the area of interest will be generated based on 5 models we tested.
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+Imports:
+  rgdal,
+  ggplot2,
+  raster,
+  rgeos,
+  PerformanceAnalytics,
+  randomForest,
+  e1071,
+  caret
