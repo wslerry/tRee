@@ -1,11 +1,5 @@
-# require(rgdal)
-# require(raster)
-# require(rgeos)
-# require(PerformanceAnalytics)
-# require(randomForest)
-# require(e1071)
-# require(caret)
-# require(ggplot2)
+# Author : Lerry William Seling
+# Date : 2019-06-10
 
 readvector <- function(vectorpath){
   require(rgdal)
@@ -289,8 +283,10 @@ vph <- function (data,img,poly,model) {
     plot(poly, col = polyCols, xlab = "", ylab = "", xaxt='n', yaxt = 'n', main="Volume/Ha")
     text(gCentroid(poly, byid = TRUE), round(poly[["volumeperha"]],1), col = "blue", font = 2)
 
-    writeRaster(volha, './output/volperha_mod1.tif', format = "GTiff", overwrite=TRUE)
     writeOGR(poly, "output", "vhamod1", driver ="ESRI Shapefile", overwrite=TRUE)
+
+    writeRaster(volha, './output/volperha_mod1.tif', format = "GTiff", overwrite=TRUE)
+
   }
   else if (model == 'mod2'){
     mod<-lm(log(VUB)~I(log(DBH))+I(log(H))+I(log(DBH)^2)+I(log(H)^2),
@@ -337,8 +333,10 @@ vph <- function (data,img,poly,model) {
     plot(poly, col = polyCols, xlab = "", ylab = "",xaxt='n', yaxt = 'n', main="Volume/Ha")
     text(gCentroid(poly, byid = TRUE), round(poly[["volumeperha"]],1), col = "blue", font = 2)
 
-    writeRaster(volha, './output/volperha_mod2.tif', format = "GTiff", overwrite=TRUE)
     writeOGR(poly, "output", "vhamod2", driver ="ESRI Shapefile", overwrite=TRUE)
+
+    writeRaster(volha, './output/volperha_mod2.tif', format = "GTiff", overwrite=TRUE)
+
   }
   else if (model == 'mod3'){
     mod<-lm(log(VUB)~I(log(DBH^2 * H)),
@@ -385,8 +383,9 @@ vph <- function (data,img,poly,model) {
     plot(poly, col = polyCols, xlab = "", ylab = "",xaxt='n', yaxt = 'n', main="Volume/Ha")
     text(gCentroid(poly, byid = TRUE), round(poly[["volumeperha"]],1), col = "blue", font = 2)
 
-    writeRaster(volha, './output/volperha_mod3.tif', format = "GTiff", overwrite=TRUE)
     writeOGR(poly, "output", "vhamod3", driver ="ESRI Shapefile", overwrite=TRUE)
+
+    writeRaster(volha, './output/volperha_mod3.tif', format = "GTiff", overwrite=TRUE)
   }
   else if (model == 'mod4'){
     mod<-lm(log(VUB)~I(log(DBH^2))+I(log(H^2)),
@@ -433,8 +432,9 @@ vph <- function (data,img,poly,model) {
     plot(poly, col = polyCols, xlab = "", ylab = "",xaxt='n', yaxt = 'n', main="Volume/Ha")
     text(gCentroid(poly, byid = TRUE), round(poly[["volumeperha"]],1), col = "blue", font = 2)
 
-    writeRaster(volha, './output/volperha_mod4.tif', format = "GTiff", overwrite=TRUE)
     writeOGR(poly, "output", "vhamod4", driver ="ESRI Shapefile", overwrite=TRUE)
+
+    writeRaster(volha, './output/volperha_mod4.tif', format = "GTiff", overwrite=TRUE)
   }
   else if (model == 'mod5'){
     mod<-lm(log(VUB)~I(log(H)),
@@ -481,7 +481,8 @@ vph <- function (data,img,poly,model) {
     plot(poly, col = polyCols, xlab = "", ylab = "",xaxt='n', yaxt = 'n', main="Volume/Ha")
     text(gCentroid(poly, byid = TRUE), round(poly[["volumeperha"]],1), col = "blue", font = 2)
 
-    writeRaster(volha, './output/volperha_mod5.tif', format = "GTiff", overwrite=TRUE)
     writeOGR(poly, "output", "vhamod5", driver ="ESRI Shapefile", overwrite=TRUE)
+
+    writeRaster(volha, './output/volperha_mod5.tif', format = "GTiff", overwrite=TRUE)
   }
 }

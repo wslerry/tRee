@@ -1,7 +1,7 @@
 Package: tRee
 Type: Package
 Title: Volume/Ha Prediction Model of Acacia Mg.
-Version: 0.1.0
+Version: 0.1.1
 Author: Lerry William Seling
 Maintainer: The package maintainer <wslerry2@hotmail.com>
 Description: A collection of models developed based on allometric dataset of Acacia Mangium in LFP0043 (GPP Sdn Bhd).
