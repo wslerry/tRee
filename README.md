@@ -5,12 +5,12 @@ Install this package in R by following this command:
 
 First install devtools
 
-'''R
+```R
 install.packages("devtools")
-'''
+```
 
 if devtools already installed in R, continue to following:
 
-'''R
+```R
 install_github("wslerry/tRee")
-'''
+```
