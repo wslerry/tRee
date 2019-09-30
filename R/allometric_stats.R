@@ -1,22 +1,21 @@
 # Author : Lerry William Seling
 # Date : 2019-06-10
 
-# require(rgdal)
-# require(raster)
-# require(rgeos)
-# require(PerformanceAnalytics)
-# require(randomForest)
-# require(e1071)
-# require(caret)
-# require(ggplot2)
+require(rgdal)
+require(raster)
+require(rgeos)
+require(PerformanceAnalytics)
+require(randomForest)
+require(e1071)
+require(caret)
+require(ggplot2)
 
 readvector <- function(vectorpath){
-  require(rgdal)
+  require(rgeos)
   readOGR(vectorpath)
 }
 
 readraster <- function(rasterdir){
-  require(raster)
   raster(rasterdir)
 }
 
@@ -29,6 +28,9 @@ datacorrelation<-function(data){
 }
 
 V <- function(data, model){
+  require(rgdal)
+  require(raster)
+  require(rgeos)
   require(randomForest)
   require(e1071)
   require(caret)
@@ -55,15 +57,16 @@ V <- function(data, model){
   }
 
   data <- subset(data, H >= 10)
-  traindata <- base::sample(nrow(data), size = 0.7 * nrow(data), replace = FALSE)
+  traindata <- base::sample(nrow(data), size = 0.65 * nrow(data), replace = FALSE)
 
   TrainSet <- data[traindata, ]
   ValidSet <- data[-traindata, ]
-  ctrl <- caret::trainControl(method= "cv", number = 5, savePredictions = TRUE)
+
+  ctrl <- caret::trainControl(method= "cv", number = 10, savePredictions = TRUE)
 
   if (model== 'mod1') {
-    mod<-train(log(VUB) ~ I(log(DBH)) + I(log(H)) + I(log(BA)),
-               data=TrainSet, method="lm", trControl = ctrl, metric="Rsquared")
+    mod <- caret::train(log(VUB) ~ I(log(DBH)) + I(log(H)),
+               data=TrainSet, method="lm", trControl = ctrl, metric="Rsquared", na.action=na.exclude)
     predictions <- predict(mod, ValidSet)
     predicted_V <- data.frame(log(ValidSet$VUB), predictions)
     fit.mod<-lm(log(ValidSet$VUB) ~ predictions, data = predicted_V)
@@ -126,114 +129,30 @@ V <- function(data, model){
   } else {stop("No Model selected. Please select model eg., 'mod1','mod2','mod3','mod4','mod5' or 'modRF'")}
 }
 
-DBH <- function(data){
-  library(randomForest)
-  library(caret)
-  library(ggplot2)
-
-  ggplotRegression <- function (fit) {
-    a <- signif(coef(fit)[1], digits = 5)
-    b <- signif(coef(fit)[2], digits = 5)
-    if (coef(fit)[2] >= 0)  {
-      textlab <- paste("y = ", a, " + ", b, "x", sep = "")
-    } else {
-      textlab <- paste("y = ", a, " - ", b, "x", sep = "")
-    }
-    options(repr.plot.width = 4, repr.plot.height = 4)
-    ggplot(fit$model, aes_string(x = names(fit$model)[1], y = names(fit$model)[2])) +
-      geom_point() +
-      geom_smooth(method = "lm", col = "red", size = 0.5, se = TRUE) +
-      labs(x="Observations",
-           y = "Predictions",
-           title = paste("Adj. R2 = ", signif(summary(fit)$adj.r.squared, 5), " | ",
-                         textlab
-           )
-      ) + theme(plot.title = element_text(size = 8, face = "bold"))
-  }
-
-  res <- cor(data)
-
-  traindata <- base::sample(nrow(data), size = 0.7 * nrow(data), replace = FALSE)
-
-  TrainSet <- data[traindata, ]
-  ValidSet <- data[-traindata, ]
-
-  ctrl <- caret::trainControl(method = "cv", number = 10, savePredictions = TRUE)
-
-  mod <- train(log(DBH) ~ I(log(H)),
-             data = TrainSet, method="lm",
-             trControl = ctrl, metric="Rsquared")
-  predictions <- predict(mod, ValidSet)
-  predicted_V <- data.frame(log(ValidSet$VUB), predictions)
-  fit.mod <- lm(log(ValidSet$VUB) ~ predictions, data = predicted_V)
-  g <- ggplotRegression(fit.mod)
-  print(mod$finalModel)
-  g
-}
-
-BA <- function(data){
-  library(randomForest)
-  library(caret)
-  library(ggplot2)
-
-  ggplotRegression <- function (fit) {
-    a <- signif(coef(fit)[1], digits = 5)
-    b <- signif(coef(fit)[2], digits = 5)
-    if (coef(fit)[2] >= 0)  {
-      textlab <- paste("y = ",a," + ",b,"x", sep="")
-    } else {
-      textlab <- paste("y = ",a," - ",b,"x", sep="")
-    }
-    options(repr.plot.width=4, repr.plot.height=4)
-    ggplot(fit$model,aes_string(x = names(fit$model)[1], y = names(fit$model)[2])) +
-      geom_point() +
-      geom_smooth(method = "lm", col = "red",size = 0.5, se=TRUE) +
-      labs(x="Observations",
-           y = "Predictions",
-           title = paste("Adj. R2 = ",signif(summary(fit)$adj.r.squared, 5)," | ",
-                         textlab
-           )
-      )+theme(plot.title = element_text(size = 8, face = "bold"))
-  }
-
-  res <- cor(data)
-
-  traindata <- base::sample(nrow(data), size=0.6*nrow(data), replace = FALSE)
-
-  TrainSet <- data[traindata, ]
-  ValidSet <- data[-traindata, ]
-  ctrl <- caret::trainControl(method = "cv", number = 10, savePredictions = TRUE)
-
-  mod <- train(log(BA) ~ I(log(H)),
-               data = TrainSet, method="lm",
-               trControl = ctrl, metric="Rsquared")
-  predictions <- predict(mod, ValidSet)
-  predicted_V <- data.frame(log(ValidSet$VUB), predictions)
-  fit.mod <- lm(log(ValidSet$VUB) ~ predictions, data = predicted_V)
-  g <- ggplotRegression(fit.mod)
-  print(mod$finalModel)
-  g
-}
-
 vph <- function (data, img, poly, model) {
-  require(raster)
-  require(rgdal)
-  require(rgeos)
+  # require(rgdal)
+  # require(raster)
+  # require(rgeos)
+  # require(PerformanceAnalytics)
+  # require(randomForest)
+  # require(e1071)
+  # require(caret)
+  # require(ggplot2)
 
-  traindata <- base::sample(nrow(data), size = 0.7 * nrow(data), replace = FALSE)
+  traindata <- base::sample(nrow(data), size = 0.65 * nrow(data), replace = FALSE)
 
   TrainSet <- data[traindata, ]
   ValidSet <- data[-traindata, ]
 
-  ctrl <- caret::trainControl(method= "cv", number = 5, savePredictions = TRUE)
+  ctrl <- caret::trainControl(method= "cv", number = 10, savePredictions = TRUE)
 
   if (model == 'mod1'){
 
-    mod <- lm(log(VUB) ~ I(log(DBH)) + I(log(H)) + I(log(BA)),
+    mod <- lm(log(VUB) ~ I(log(DBH)) + I(log(H)),
               data=TrainSet, method="lm", trControl = ctrl, metric="Rsquared")
     coef(mod)
     vol <- function(x) {
-      exp(coef(mod)[1]) * (23.1 ^ coef(mod)[2]) * (x ^ coef(mod)[3]) * (0.046 ^ coef(mod)[4])
+      exp(coef(mod)[1]) * (23.1 ^ coef(mod)[2]) * (x ^ coef(mod)[3])
     }
 
     vol.agg <- aggregate(img, fact = 4 / res(img))
