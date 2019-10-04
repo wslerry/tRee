@@ -11,11 +11,12 @@ require(caret)
 require(ggplot2)
 
 readvector <- function(vectorpath){
-  require(rgeos)
+  require(rgdal)
   readOGR(vectorpath)
 }
 
 readraster <- function(rasterdir){
+  require(raster)
   raster(rasterdir)
 }
 
@@ -28,13 +29,13 @@ datacorrelation<-function(data){
 }
 
 V <- function(data, model){
-  require(rgdal)
-  require(raster)
-  require(rgeos)
-  require(randomForest)
-  require(e1071)
-  require(caret)
-  require(ggplot2)
+  # require(rgdal)
+  # require(raster)
+  # require(rgeos)
+  # require(randomForest)
+  # require(e1071)
+  # require(caret)
+  # require(ggplot2)
 
   ggplotRegression <- function (fit) {
     a <- signif(coef(fit)[1], digits = 5)
@@ -57,7 +58,7 @@ V <- function(data, model){
   }
 
   data <- subset(data, H >= 10)
-  traindata <- base::sample(nrow(data), size = 0.65 * nrow(data), replace = FALSE)
+  traindata <- base::sample(nrow(data), size = 0.7 * nrow(data), replace = FALSE)
 
   TrainSet <- data[traindata, ]
   ValidSet <- data[-traindata, ]
@@ -139,7 +140,7 @@ vph <- function (data, img, poly, model) {
   # require(caret)
   # require(ggplot2)
 
-  traindata <- base::sample(nrow(data), size = 0.65 * nrow(data), replace = FALSE)
+  traindata <- base::sample(nrow(data), size = 0.7 * nrow(data), replace = FALSE)
 
   TrainSet <- data[traindata, ]
   ValidSet <- data[-traindata, ]
